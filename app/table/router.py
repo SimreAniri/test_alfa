@@ -26,3 +26,11 @@ async def wrget_dataite_data(name: str):
     if name:
         return name.value
     raise NameNotExistsException
+
+@router.delete("/{name}")
+async def del_booking(name: str):
+    existing_name = await TableDAO.find_one_or_none(name=name)
+    if existing_name:
+        await TableDAO.delete(name=name)
+    else:
+        raise NameNotExistsException
