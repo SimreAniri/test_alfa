@@ -36,9 +36,10 @@ async def del_data(name: str):
         raise NameNotExistsException
     
 @router.patch("/patch/{name}")
-async def del_booking(name: str):
+async def patch_value(name: str, value: str):
     existing_name = await TableDAO.find_one_or_none(name=name)
     if existing_name:
-        await TableDAO.delete(name=name)
+        value = json.loads(value)
+        await TableDAO.update_data(name=name, value=value)
     else:
         raise NameNotExistsException
