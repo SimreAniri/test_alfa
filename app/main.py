@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from app.users.router import router as router_users
+from app.table.router import router as table_users
 
 app = FastAPI()
 
-app.include_router(router_users)
+app.include_router(table_users)

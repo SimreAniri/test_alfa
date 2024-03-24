@@ -8,4 +8,4 @@ class Table(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, nullable=False)
     name: Mapped[str] = mapped_column(VARCHAR(50), unique=True, nullable=False)
     value: Mapped[list[str]] = mapped_column(JSON)
-    date_update: Mapped[datetime] = mapped_column(Date, nullable=True)
+    date_update: Mapped[datetime] = mapped_column(Date, nullable=False)

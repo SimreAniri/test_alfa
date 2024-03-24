@@ -1,30 +1,28 @@
+import json
 from fastapi import APIRouter
 
-from app.exceptions import UserNotExistsException
-from app.users.dao import UsersDAO
-from app.users.schemas import SUserRegister, SUserText
+from app.exceptions import NameAlreadyExistsException, NameNotExistsException
+from app.table.dao import TableDAO
+from app.table.schemas import SNameAdd
 
 router = APIRouter(
-    tags=["Пользователь"]
+    prefix="/tab",
+    tags=["Таблица"]
 )
 
-@router.post("/register")
-async def register_user(user_data: SUserRegister):
-    username = await user_data.username
-    await UsersDAO.add(username=username,
-                       password=user_data.password)
-    return username
+@router.post("/add")
+async def add_name(table_data: SNameAdd):
+    existing_name = await TableDAO.find_one_or_none(name=table_data.name)
+    if existing_name:
+        raise NameAlreadyExistsException
+    value = json.loads(table_data.value)
+    await TableDAO.add(name=table_data.name,
+                       value=value)
+    return table_data.name, value
 
-@router.post("/write_data")
-async def write_data(user_data: SUserText):
-    username = await user_data.username
-    await UsersDAO.update_data(username=username,
-                       textdata=user_data.textdata)
-    return username, user_data.textdata
-
-@router.get("/get_data/{username}")
-async def wrget_dataite_data(username: str):
-    user = await UsersDAO.find_one_or_none(username=username)
-    if user:
-        return user.textdata
-    raise UserNotExistsException
+@router.get("/get_data/{name}")
+async def wrget_dataite_data(name: str):
+    name = await TableDAO.find_one_or_none(name=name)
+    if name:
+        return name.value
+    raise NameNotExistsException
